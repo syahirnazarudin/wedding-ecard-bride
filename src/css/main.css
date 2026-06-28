@@ -389,6 +389,7 @@ body {
 .btn-open-envelope:focus-visible,
 .btn-form-action:focus-visible,
 .geo-action-pill:focus-visible,
+.rsvp-card-button:focus-visible,
 .music-wrapper:focus-visible,
 .form-row input:focus,
 .form-row select:focus,
@@ -673,6 +674,60 @@ body {
   font-weight: 600;
 }
 
+.rsvp-card-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 9px;
+  width: 100%;
+  min-height: 44px;
+  margin: 10px 0 0;
+  border: 1px solid rgba(161, 130, 74, 0.22);
+  border-radius: 8px;
+  background: rgba(247, 243, 235, 0.55);
+  color: #8a6938;
+  font-family: "Cinzel", serif;
+  font-size: 0.82rem;
+  font-weight: 600;
+  letter-spacing: 2.4px;
+  cursor: pointer;
+  box-shadow:
+    0 8px 18px rgba(161, 130, 74, 0.08),
+    inset 0 1px 0 rgba(255, 255, 255, 0.9);
+  transition:
+    background 0.2s ease,
+    border-color 0.2s ease,
+    color 0.2s ease,
+    transform 0.2s ease;
+}
+
+.rsvp-card-button span:first-child {
+  display: grid;
+  width: 24px;
+  height: 24px;
+  place-items: center;
+  border-radius: 50%;
+  background: rgba(161, 130, 74, 0.12);
+}
+
+.rsvp-card-button svg {
+  width: 15px;
+  height: 15px;
+  fill: none;
+  stroke: currentColor;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-width: 2;
+}
+
+.rsvp-card-button:active,
+.rsvp-card-button.is-active {
+  border-color: rgba(161, 130, 74, 0.72);
+  background: rgba(234, 217, 186, 0.72);
+  color: #6d512b;
+  transform: translateY(1px);
+}
+
 /* LINK SHORTS BUTTONS */
 .geo-navigation-row {
   display: flex;
@@ -847,7 +902,7 @@ body {
   z-index: 990;
   display: grid;
   width: min(calc(100% - 28px), 402px);
-  grid-template-columns: repeat(5, 1fr);
+  grid-template-columns: repeat(4, 1fr);
   gap: 4px;
   padding: 9px 10px 8px;
   background: linear-gradient(

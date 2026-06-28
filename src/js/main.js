@@ -1,5 +1,10 @@
 ﻿import "../css/main.css";
-import { fetchWishes, hasSupabaseConfig, submitWish } from "./api.js";
+import {
+  fetchWishes,
+  hasSupabaseConfig,
+  submitRsvp,
+  submitWish,
+} from "./api.js";
 
 const weddingEvent = {
   title: "Walimatulurus Zubairah & Syahir",
@@ -39,6 +44,12 @@ document.addEventListener("DOMContentLoaded", () => {
   document
     .getElementById("wishForm")
     ?.addEventListener("submit", handleWishSubmit);
+
+  document
+    .getElementById("rsvpForm")
+    ?.addEventListener("submit", handleRsvpSubmit);
+
+  setupRsvpFieldGuards();
 
   document
     .getElementById("wishShortcut")
@@ -82,6 +93,19 @@ document.addEventListener("DOMContentLoaded", () => {
   setupCountdown();
   renderWishes();
 });
+
+function setupRsvpFieldGuards() {
+  const phoneInput = document.getElementById("rsvpPhone");
+  const paxInput = document.getElementById("rsvpPax");
+
+  phoneInput?.addEventListener("input", () => {
+    phoneInput.value = phoneInput.value.replace(/\D/g, "").slice(0, 12);
+  });
+
+  paxInput?.addEventListener("input", () => {
+    paxInput.value = paxInput.value.replace(/\D/g, "").slice(0, 2);
+  });
+}
 
 function unveilInvitation() {
   const envelope = document.getElementById("envelope-cover");
@@ -405,6 +429,16 @@ async function handleWishSubmit(event) {
 
   if (!wish.name || !wish.message) return;
 
+  if (wish.name.length > 50) {
+    showWishValidationError("Nama wajib diisi dan maksimum 50 aksara.");
+    return;
+  }
+
+  if (wish.message.length > 300) {
+    showWishValidationError("Ucapan wajib diisi dan maksimum 300 aksara.");
+    return;
+  }
+
   feedback.className = "api-feedback-msg is-pending";
   feedback.textContent = "Sedang menghantar ucapan...";
 
@@ -426,4 +460,74 @@ async function handleWishSubmit(event) {
     feedback.textContent =
       "Maaf, ucapan tidak berjaya dihantar. Sila cuba lagi.";
   }
+}
+
+function showWishValidationError(message) {
+  const feedback = document.getElementById("wishStatusFeedback");
+
+  if (!feedback) return;
+
+  feedback.className = "api-feedback-msg is-error";
+  feedback.textContent = message;
+}
+
+async function handleRsvpSubmit(event) {
+  event.preventDefault();
+
+  const form = event.currentTarget;
+  const feedback = document.getElementById("rsvpStatusFeedback");
+  const formData = new FormData(form);
+  const name = formData.get("rsvpName").trim();
+  const phone = formData.get("rsvpPhone").trim();
+  const paxValue = formData.get("rsvpPax").trim();
+  const pax = Number.parseInt(paxValue, 10);
+  const rsvp = {
+    name,
+    phone,
+    pax,
+  };
+
+  if (rsvp.name.length < 1 || rsvp.name.length > 50) {
+    showRsvpValidationError("Nama wajib diisi dan maksimum 50 aksara.");
+    return;
+  }
+
+  if (!/^\d{1,12}$/.test(rsvp.phone)) {
+    showRsvpValidationError(
+      "No. telefon hanya boleh nombor sahaja, maksimum 12 digit.",
+    );
+    return;
+  }
+
+  if (!/^\d{1,2}$/.test(paxValue) || !Number.isInteger(pax) || pax < 1) {
+    showRsvpValidationError(
+      "Jumlah pax mesti nombor positif, maksimum 2 digit.",
+    );
+    return;
+  }
+
+  feedback.className = "api-feedback-msg is-pending";
+  feedback.textContent = "Sedang menghantar RSVP...";
+
+  try {
+    await submitRsvp(rsvp);
+
+    feedback.className = "api-feedback-msg is-success";
+    feedback.textContent = "Terima kasih, RSVP anda telah disimpan.";
+    form.reset();
+    document.getElementById("rsvpPax").value = "1";
+  } catch (error) {
+    console.warn("Unable to submit RSVP.", error);
+    feedback.className = "api-feedback-msg is-error";
+    feedback.textContent = "Maaf, RSVP tidak berjaya dihantar. Sila cuba lagi.";
+  }
+}
+
+function showRsvpValidationError(message) {
+  const feedback = document.getElementById("rsvpStatusFeedback");
+
+  if (!feedback) return;
+
+  feedback.className = "api-feedback-msg is-error";
+  feedback.textContent = message;
 }

@@ -391,7 +391,8 @@ body {
 .geo-action-pill:focus-visible,
 .music-wrapper:focus-visible,
 .form-row input:focus,
-.form-row select:focus {
+.form-row select:focus,
+.form-row textarea:focus {
   outline: 2px solid #a1824a;
   outline-offset: 3px;
 }
@@ -785,6 +786,7 @@ body {
   background: rgba(247, 243, 235, 0.88);
 }
 
+.rsvp-form,
 .wish-form {
   margin-top: 26px;
 }
@@ -845,7 +847,7 @@ body {
   z-index: 990;
   display: grid;
   width: min(calc(100% - 28px), 402px);
-  grid-template-columns: repeat(4, 1fr);
+  grid-template-columns: repeat(5, 1fr);
   gap: 4px;
   padding: 9px 10px 8px;
   background: linear-gradient(
